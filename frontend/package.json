@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --config .prettierrc  --check .",
-    "format:fix": "prettier --config .prettierrc --write ."
+    "format:fix": "prettier --config .prettierrc --write .",
+    "test": "vitest run",
+    "test:watch": "vitest watch"
   },
   "dependencies": {
     "@emotion/cache": "^11.11.0",
@@ -18,7 +20,7 @@
     "@mui/material": "^5.15.16",
     "@mui/material-nextjs": "^5.15.11",
     "@tanstack/react-query": "^5.66.0",
-    "next": "14.2.3",
+    "next": "14.2.4",
     "notistack": "^3.0.2",
     "react": "^18",
     "react-dom": "^18",
@@ -27,12 +29,19 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.2.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@vitejs/plugin-react": "^4.3.4",
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
+    "jsdom": "^26.0.0",
     "prettier": "^3.2.5",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.0.5"
   }
 }
