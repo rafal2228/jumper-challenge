@@ -1,7 +1,6 @@
 'use client';
 import MenuIcon from '@mui/icons-material/Menu';
 import {
-  AppBar,
   Box,
   Divider,
   Drawer,
@@ -14,6 +13,8 @@ import {
   Typography,
 } from '@mui/material';
 import { ComponentProps, PropsWithChildren, useState } from 'react';
+import { AccountConnection } from './AccountConnection';
+import { AccountDetails } from './AccountDetails';
 
 const drawerWidth = 240;
 
@@ -45,6 +46,22 @@ const Links = () => (
 export const LayoutWithDrawer = ({ children }: PropsWithChildren) => {
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  const drawerContent = (
+    <>
+      <Toolbar>
+        <Logo />
+      </Toolbar>
+
+      <Box sx={{ padding: 2, display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
+        <AccountConnection />
+      </Box>
+
+      <Divider />
+
+      <Links />
+    </>
+  );
+
   return (
     <Box
       sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, minHeight: '100vh', alignItems: 'stretch' }}
@@ -58,11 +75,15 @@ export const LayoutWithDrawer = ({ children }: PropsWithChildren) => {
         <Toolbar
           sx={{
             gap: 1,
+            display: 'flex',
+            justifyContent: 'space-between',
           }}
         >
           <IconButton color="inherit" aria-label="open drawer" onClick={() => setMobileOpen(true)} edge="start">
             <MenuIcon />
           </IconButton>
+
+          <AccountDetails />
         </Toolbar>
 
         <Divider />
@@ -82,18 +103,13 @@ export const LayoutWithDrawer = ({ children }: PropsWithChildren) => {
         open={mobileOpen}
         onClose={() => setMobileOpen(false)}
       >
-        <Toolbar>
-          <Logo />
-        </Toolbar>
-
-        <Divider />
-
-        <Links />
+        {drawerContent}
       </Drawer>
 
       <Drawer
         sx={{
-          display: { xs: 'none', md: 'block' },
+          display: { xs: 'none', md: 'flex' },
+          flexDirection: 'column',
           width: drawerWidth,
           flexShrink: 0,
           '& .MuiDrawer-paper': {
@@ -105,13 +121,7 @@ export const LayoutWithDrawer = ({ children }: PropsWithChildren) => {
         anchor="left"
         open
       >
-        <Toolbar>
-          <Logo />
-        </Toolbar>
-
-        <Divider />
-
-        <Links />
+        {drawerContent}
       </Drawer>
 
       <Box
