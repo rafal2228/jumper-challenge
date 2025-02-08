@@ -16,14 +16,15 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20.11.0'
+          node-version: '22.12.0'
           cache: 'npm'
 
-      - run: |
-        cd frontend
-        npm ci
-        npm run format
-        npm run lint
+      - shell: bash
+        run: |
+          cd frontend
+          npm ci
+          npm run format
+          npm run lint
   backend:
     name: Backend lint and format
     runs-on: ubuntu-latest
@@ -32,11 +33,12 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20.11.0'
+          node-version: '22.12.0'
           cache: 'npm'
 
-      - run: |
-        cd backend
-        npm ci
-        npm run format
-        npm run lint
+      - shell: backend
+        run: |
+          cd frontend
+          npm ci
+          npm run format
+          npm run lint
