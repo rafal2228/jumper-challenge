@@ -16,6 +16,8 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
+          cache-dependency-path:
+            frontend
           node-version: '22.12.0'
           cache: 'npm'
 
@@ -33,6 +35,8 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
+          cache-dependency-path:
+            backend
           node-version: '22.12.0'
           cache: 'npm'
 
