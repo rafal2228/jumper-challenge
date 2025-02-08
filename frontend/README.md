@@ -1,4 +1,4 @@
-# 🚀 Jumper challenge backend
+# 🚀 Jumper challenge frontend
 
 ## Getting Started
 
