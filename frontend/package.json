@@ -17,9 +17,14 @@
     "@mui/icons-material": "^5.15.16",
     "@mui/material": "^5.15.16",
     "@mui/material-nextjs": "^5.15.11",
+    "@tanstack/react-query": "^5.66.0",
     "next": "14.2.3",
+    "notistack": "^3.0.2",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "viem": "^2.22.23",
+    "wagmi": "^2.14.11",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@types/node": "^20",

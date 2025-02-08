@@ -1,10 +1,11 @@
+import { LayoutWithDrawer } from '@/components/LayoutWithDrawer';
+import { Providers } from '@/Providers';
+import theme from '@/theme';
 import { CssBaseline } from '@mui/material';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
 import { ThemeProvider } from '@mui/material/styles';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import theme from '../theme';
-import { LayoutWithDrawer } from './components/LayoutWithDrawer';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -25,7 +26,9 @@ export default function RootLayout({
 
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
-            <LayoutWithDrawer>{children}</LayoutWithDrawer>
+            <Providers>
+              <LayoutWithDrawer>{children}</LayoutWithDrawer>
+            </Providers>
           </ThemeProvider>
         </AppRouterCacheProvider>
       </body>
