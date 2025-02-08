@@ -42,6 +42,7 @@ const WalletDropdown = () => {
       >
         {connectors.map((connector) => (
           <MenuItem
+            key={connector.id}
             onClick={() =>
               connect({
                 connector,
