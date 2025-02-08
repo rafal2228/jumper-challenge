@@ -9,15 +9,14 @@ concurrency:
 
 jobs:
   frontend:
-    name: Frontend lint and format
+    name: Frontend lint, format and test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          cache-dependency-path:
-            frontend
+          cache-dependency-path: frontend
           node-version: '22.12.0'
           cache: 'npm'
 
@@ -27,16 +26,16 @@ jobs:
           npm ci
           npm run format
           npm run lint
+          npm run test
   backend:
-    name: Backend lint and format
+    name: Backend lint, format and test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          cache-dependency-path:
-            backend
+          cache-dependency-path: backend
           node-version: '22.12.0'
           cache: 'npm'
 
@@ -46,3 +45,4 @@ jobs:
           npm ci
           npm run format
           npm run lint
+          npm run test
