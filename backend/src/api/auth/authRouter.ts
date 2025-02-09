@@ -1,7 +1,7 @@
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import express, { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { createSiweMessage, verifySiweMessage } from 'viem/siwe';
+import { verifySiweMessage } from 'viem/siwe';
 import { z } from 'zod';
 
 import { createApiResponse } from '@/api-docs/openAPIResponseBuilders';
@@ -84,14 +84,9 @@ type VerifyResponse = z.infer<typeof verifyResponseSchema>;
 
 const verifyRequestBodySchema = z.object({
   signature: commonValidations.signature,
-  message: z.object({
-    address: commonValidations.address,
-    chainId: z.number().int(),
-    domain: z.string(),
-    nonce: z.string(),
-    uri: z.string().url(),
-    version: z.literal('1'),
-  }),
+  message: z.string(),
+  address: commonValidations.address,
+  nonce: z.string(),
 });
 
 type VerifyRequest = Request<{}, VerifyResponse, z.infer<typeof verifyRequestBodySchema>>;
@@ -110,14 +105,7 @@ authRegistry.registerPath({
           example: {
             signature:
               '0x66edc32e2ab001213321ab7d959a2207fcef5190cc9abb6da5b0d2a8a9af2d4d2b0700e2c317c4106f337fd934fbbb0bf62efc8811a78603b33a8265d3b8f8cb1c',
-            message: {
-              address: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266',
-              chainId: 1,
-              domain: 'example.com',
-              nonce: 'f2f9f276a067a2fb34e1e95d8f51517ce8e84ea9756e83ab325713a9aea9ee9fa7b424b5339beafc0695ccd77aa772f8',
-              uri: 'https://example.com',
-              version: '1',
-            },
+            message: 'SWIE message similar to: jumper.com wants you to sign in with your Ethereum account...',
           },
         },
       },
@@ -131,7 +119,7 @@ authRouter.post(
   validateRequest(z.object({ body: verifyRequestBodySchema })),
   async (req: VerifyRequest, res: Response) => {
     const { body } = req;
-    const isValidNonce = await validateNonce(body.message.address, body.message.nonce);
+    const isValidNonce = await validateNonce(body.address, body.nonce);
 
     if (!isValidNonce) {
       const serviceResponse = new ServiceResponse<null>(
@@ -144,13 +132,25 @@ authRouter.post(
       return handleServiceResponse(serviceResponse, res);
     }
 
-    const message = createSiweMessage(body.message);
-    const isValidSignature = verifySiweMessage(publicClient, {
-      message,
-      signature: body.signature,
-    });
+    try {
+      const isValidSignature = await verifySiweMessage(publicClient, {
+        message: body.message,
+        signature: body.signature,
+        address: body.address,
+        nonce: body.nonce,
+      });
 
-    if (!isValidSignature) {
+      if (!isValidSignature) {
+        const serviceResponse = new ServiceResponse<null>(
+          ResponseStatus.Failed,
+          'Bad request',
+          null,
+          StatusCodes.BAD_REQUEST,
+        );
+
+        return handleServiceResponse(serviceResponse, res);
+      }
+    } catch (error) {
       const serviceResponse = new ServiceResponse<null>(
         ResponseStatus.Failed,
         'Bad request',
@@ -161,10 +161,10 @@ authRouter.post(
       return handleServiceResponse(serviceResponse, res);
     }
 
-    await deleteNonce(body.message.address);
+    await deleteNonce(body.address);
 
-    const accessToken = generateAccessToken(body.message.address);
-    const refreshToken = generateRefreshToken(body.message.address);
+    const accessToken = generateAccessToken(body.address);
+    const refreshToken = generateRefreshToken(body.address);
 
     res.cookie(env.AUTH_REFRESH_TOKEN_COOKIE_NAME, refreshToken, {
       httpOnly: true,

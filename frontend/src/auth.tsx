@@ -135,11 +135,8 @@ const useAuthProvider = () => {
     },
   });
   const verify = useMutation({
-    mutationFn: async ({ signature, message }: { signature: string; message: CreateSiweMessageParameters }) => {
-      const res = await http.post<APIResponse<{ accessToken: string }>>('/auth/verify', {
-        signature,
-        message,
-      });
+    mutationFn: async (params: { signature: string; message: string; address: Address; nonce: string }) => {
+      const res = await http.post<APIResponse<{ accessToken: string }>>('/auth/verify', params);
 
       return res.data.responseObject.accessToken;
     },
@@ -156,20 +153,20 @@ const useAuthProvider = () => {
     try {
       const nonce = await getNonce.mutateAsync(address);
 
-      const message = {
+      const message = createSiweMessage({
         address,
         chainId: account.chainId,
         domain: location.hostname,
         nonce,
         uri: location.href,
         version: '1',
-      } as const;
-
-      const signature = await sign.signMessageAsync({
-        message: createSiweMessage(message),
       });
 
-      const accessToken = await verify.mutateAsync({ signature, message });
+      const signature = await sign.signMessageAsync({
+        message,
+      });
+
+      const accessToken = await verify.mutateAsync({ signature, message, address, nonce });
 
       localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
 

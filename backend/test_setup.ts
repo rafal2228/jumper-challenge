@@ -15,3 +15,5 @@ const keypair = generateKeyPairSync('rsa', {
 
 vi.stubEnv('AUTH_PRIVATE_KEY', keypair.privateKey);
 vi.stubEnv('AUTH_PUBLIC_KEY', keypair.publicKey);
+
+vi.mock('iovalkey');

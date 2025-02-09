@@ -9,7 +9,7 @@ export type ProtectedRoute<R extends Request> = R & {
   user: { address: Address };
 };
 
-export const protectedRoute = () => (req: ProtectedRoute<Request>, res: Response, next: NextFunction) => {
+export const protectedRoute = (req: Request, res: Response, next: NextFunction) => {
   try {
     const accessToken = req.headers.authorization?.split(' ')[1];
 
@@ -18,7 +18,8 @@ export const protectedRoute = () => (req: ProtectedRoute<Request>, res: Response
     }
 
     const decodedToken = verifyToken(accessToken);
-    req.user = decodedToken;
+
+    (req as ProtectedRoute<Request>).user = decodedToken;
 
     next();
   } catch (err) {
