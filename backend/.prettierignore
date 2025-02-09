@@ -4,3 +4,4 @@ coverage
 .eslintcache
 package.json
 package-lock.json
+docker-compose.yaml
