@@ -9,7 +9,7 @@ import { ResponseStatus, ServiceResponse } from '@/common/models/serviceResponse
 import { commonValidations } from '@/common/utils/commonValidation';
 import { env } from '@/common/utils/envConfig';
 import { handleServiceResponse, validateRequest } from '@/common/utils/httpHandlers';
-import { publicClient } from '@/common/utils/publicClient';
+import { mainnetClient } from '@/common/utils/viemClient';
 import { generateAccessToken, generateRefreshToken, verifyToken } from './services/auth';
 import { createNonce, deleteNonce, NONCE_TIMEOUT, validateNonce } from './services/nonce';
 
@@ -133,7 +133,7 @@ authRouter.post(
     }
 
     try {
-      const isValidSignature = await verifySiweMessage(publicClient, {
+      const isValidSignature = await verifySiweMessage(mainnetClient, {
         message: body.message,
         signature: body.signature,
         address: body.address,

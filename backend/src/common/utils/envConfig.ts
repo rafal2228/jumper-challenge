@@ -15,4 +15,5 @@ export const env = cleanEnv(process.env, {
   AUTH_PRIVATE_KEY: str(),
   AUTH_PUBLIC_KEY: str(),
   AUTH_REFRESH_TOKEN_COOKIE_NAME: str({ devDefault: testOnly('rt_f2b4c8d9') }),
+  POSTGRES_URL: str({ devDefault: testOnly('postgres://postgres:postgres@localhost:5432/postgres') }),
 });
