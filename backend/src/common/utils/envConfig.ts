@@ -14,5 +14,5 @@ export const env = cleanEnv(process.env, {
   VALKEY_PORT: num({ devDefault: testOnly(6379) }),
   AUTH_PRIVATE_KEY: str(),
   AUTH_PUBLIC_KEY: str(),
-  AUTH_REFRESH_TOKEN_COOKIE_NAME: str({ devDefault: 'rt_f2b4c8d9' }),
+  AUTH_REFRESH_TOKEN_COOKIE_NAME: str({ devDefault: testOnly('rt_f2b4c8d9') }),
 });

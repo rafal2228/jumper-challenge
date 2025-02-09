@@ -8,6 +8,7 @@ export default defineConfig({
     },
     globals: true,
     restoreMocks: true,
+    setupFiles: ['test_setup.ts'],
   },
   plugins: [tsconfigPaths()],
 });
