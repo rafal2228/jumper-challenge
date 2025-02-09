@@ -13,6 +13,7 @@ import {
   Typography,
 } from '@mui/material';
 import { ComponentProps, PropsWithChildren, useState } from 'react';
+import { AccountConfirmation } from './AccountConfirmation';
 import { AccountConnection } from './AccountConnection';
 import { AccountDetails } from './AccountDetails';
 
@@ -52,8 +53,10 @@ export const LayoutWithDrawer = ({ children }: PropsWithChildren) => {
         <Logo />
       </Toolbar>
 
-      <Box sx={{ padding: 2, display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
+      <Box sx={{ padding: 2, gap: 1, display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
         <AccountConnection />
+
+        <AccountConfirmation />
       </Box>
 
       <Divider />
