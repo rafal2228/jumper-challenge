@@ -6,6 +6,7 @@ import { pino } from 'pino';
 
 import { openAPIRouter } from '@/api-docs/openAPIRouter';
 import { authRouter } from '@/api/auth/authRouter';
+import { exploreRouter } from '@/api/explore/exploreRouter';
 import { healthCheckRouter } from '@/api/healthCheck/healthCheckRouter';
 import { watchlistsRouter } from '@/api/watchlists/watchlistsRouter';
 import errorHandler from '@/common/middleware/errorHandler';
@@ -33,6 +34,7 @@ app.use(requestLogger);
 app.use('/health-check', healthCheckRouter);
 app.use('/auth', authRouter);
 app.use('/watchlists', watchlistsRouter);
+app.use('/explore', exploreRouter);
 
 // Swagger UI
 app.use(openAPIRouter);

@@ -17,4 +17,5 @@ export const env = cleanEnv(process.env, {
   AUTH_REFRESH_TOKEN_COOKIE_NAME: str({ devDefault: testOnly('rt_f2b4c8d9') }),
   POSTGRES_URL: str({ devDefault: testOnly('postgres://postgres:postgres@localhost:5432/postgres') }),
   COINGECKO_API_KEY: str({ devDefault: testOnly('') }),
+  ALCHEMY_API_KEY: str({ devDefault: testOnly('') }),
 });

@@ -1,19 +1,18 @@
 'use client';
 import { useAuth } from '@/auth';
 import { getBlockExplorerUrl, supportedChains } from '@/utils/chain';
-import { authHttp, isAPIError } from '@/utils/http';
+import { useAddToWatchlist } from '@/utils/watchlist';
 import { zodResolver } from '@hookform/resolvers/zod';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import { Box, Button, Card, CardContent, Link, TextField, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useSnackbar } from 'notistack';
 import { useForm } from 'react-hook-form';
 import { Address, erc20Abi, formatUnits, isAddress } from 'viem';
 import { useAccount, useReadContracts } from 'wagmi';
 import { z } from 'zod';
 import { AccountConfirmation } from './AccountConfirmation';
 import { AccountConnection } from './AccountConnection';
+import { NetworkSelect } from './NetworkSelect';
 
 const schema = z.object({
   tokenAddress: z.string().refine((value) => isAddress(value) as unknown as string, 'Invalid address'),
@@ -22,25 +21,6 @@ const schema = z.object({
     .int()
     .refine((value) => supportedChains.includes(value as (typeof supportedChains)[number]), 'Unsupported chain'),
 });
-
-const useAddToWatchlist = () => {
-  const { enqueueSnackbar } = useSnackbar();
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ address, ...data }: { address: Address; tokenAddress: Address; tokenChainId: number }) => {
-      return authHttp.post(`/watchlists/${address}`, data);
-    },
-    onSuccess: (_, data) => {
-      queryClient.invalidateQueries({ queryKey: ['watchlist', data.address] });
-    },
-    onError: (error) => {
-      if (isAPIError(error)) {
-        enqueueSnackbar(error.response?.data.message ?? error.message, { variant: 'error' });
-      }
-    },
-  });
-};
 
 export const TokenForm = () => {
   const { address } = useAccount();
@@ -179,10 +159,8 @@ export const TokenForm = () => {
           helperText={errors.tokenAddress?.message}
         />
 
-        <TextField
+        <NetworkSelect
           variant="standard"
-          label="Network ID"
-          type="number"
           {...register('tokenChainId')}
           error={!!errors.tokenChainId}
           helperText={errors.tokenChainId?.message}

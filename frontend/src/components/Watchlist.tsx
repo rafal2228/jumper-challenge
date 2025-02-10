@@ -1,44 +1,13 @@
 'use client';
-import { APIResponse, http } from '@/utils/http';
+import { useWatchlist } from '@/utils/watchlist';
 import { Button, Card, CardContent, Typography } from '@mui/material';
-import { useQuery } from '@tanstack/react-query';
-import invariant from 'tiny-invariant';
-import { Address, isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import { AccountConnection } from './AccountConnection';
 import { TokenCard } from './TokenCard';
 
-type Token = {
-  address: Address;
-  chainId: number;
-  name: string;
-  symbol: string;
-  decimals: number;
-  logoUrl: string | null;
-  priceInUSD: string | null;
-};
-
-type Watchlist = {
-  holdings: Array<{
-    address: Address;
-    amount: string;
-    token: Token;
-  }>;
-};
-
 export const Watchlist = () => {
   const { address } = useAccount();
-  const watchlist = useQuery({
-    enabled: address && isAddress(address),
-    queryKey: ['watchlist', address],
-    queryFn: async () => {
-      invariant(address, 'Expected address to be a string');
-
-      const res = await http.get<APIResponse<Watchlist>>(`/watchlists/${address}`);
-
-      return res.data.responseObject;
-    },
-  });
+  const watchlist = useWatchlist(address);
 
   if (!address) {
     return (
