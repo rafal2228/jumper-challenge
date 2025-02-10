@@ -2,7 +2,6 @@ import { Button, ListItemIcon, Menu, MenuItem, Typography } from '@mui/material'
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
 import { useAccount, useConnect, useConnectors } from 'wagmi';
-import { AccountDetails } from './AccountDetails';
 import { ConnectorIcon } from './ConnectorIcon';
 
 const WalletDropdown = () => {
@@ -64,9 +63,9 @@ const WalletDropdown = () => {
 export const AccountConnection = () => {
   const { isConnected } = useAccount();
 
-  if (!isConnected) {
-    return <WalletDropdown />;
+  if (isConnected) {
+    return null;
   }
 
-  return <AccountDetails />;
+  return <WalletDropdown />;
 };

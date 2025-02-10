@@ -19,9 +19,9 @@ import { AccountDetails } from './AccountDetails';
 
 const drawerWidth = 240;
 
-const Logo = ({ sx, ...props }: ComponentProps<typeof Box>) => {
+const Logo = (props: ComponentProps<typeof Box>) => {
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', ...sx }} {...props}>
+    <Box display="flex" alignItems="center" {...props}>
       <Typography variant="h5" component="h1" color="primary.main" fontWeight="bold">
         ERC20 Explorer
       </Typography>
@@ -53,8 +53,10 @@ export const LayoutWithDrawer = ({ children }: PropsWithChildren) => {
         <Logo />
       </Toolbar>
 
-      <Box sx={{ padding: 2, gap: 1, display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
+      <Box display="flex" flexDirection="column" alignItems="stretch" padding={2} gap={1}>
         <AccountConnection />
+
+        <AccountDetails />
 
         <AccountConfirmation />
       </Box>
@@ -66,15 +68,8 @@ export const LayoutWithDrawer = ({ children }: PropsWithChildren) => {
   );
 
   return (
-    <Box
-      sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, minHeight: '100vh', alignItems: 'stretch' }}
-    >
-      <Box
-        sx={{
-          display: { xs: 'block', md: 'none' },
-          position: 'sticky',
-        }}
-      >
+    <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} minHeight="100vh" alignItems="stretch">
+      <Box display={{ xs: 'block', md: 'none' }} position="sticky">
         <Toolbar
           sx={{
             gap: 1,
@@ -127,12 +122,7 @@ export const LayoutWithDrawer = ({ children }: PropsWithChildren) => {
         {drawerContent}
       </Drawer>
 
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-        }}
-      >
+      <Box component="main" flexGrow={1}>
         {children}
       </Box>
     </Box>

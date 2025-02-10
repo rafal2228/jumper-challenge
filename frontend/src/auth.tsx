@@ -66,44 +66,49 @@ const useAuthInterceptors = () => {
   const store = useStore();
 
   useEffect(() => {
-    const id = authHttp.interceptors.request.use(
-      async (config) => {
-        const authToken = store.get(authAtom).accessToken;
+    const accessId = authHttp.interceptors.request.use(async (config) => {
+      const authToken = store.get(authAtom).accessToken;
 
-        if (!authToken) {
-          return config;
-        }
-
-        config.headers.Authorization = `Bearer ${authToken}`;
-
+      if (!authToken) {
         return config;
-      },
-      async (error) => {
-        const { config, response: { status } = {} } = error as AxiosError<unknown>;
+      }
 
-        if (status !== 401 || !config) {
-          return Promise.reject(error);
-        }
+      config.headers.Authorization = `Bearer ${authToken}`;
 
-        try {
-          const res = await http.post<APIResponse<{ accessToken: string }>>('/auth/refresh');
+      return config;
+    });
+    const refreshId = authHttp.interceptors.response.use(undefined, async (error) => {
+      const { config, response: { status } = {} } = error as AxiosError<unknown>;
 
-          const accessToken = res.data.responseObject.accessToken;
+      if (status !== 401 || !config) {
+        return Promise.reject(error);
+      }
 
-          config.headers = config.headers.setAuthorization(`Bearer ${accessToken}`);
-          store.set(accessTokenAtom, accessToken);
+      try {
+        const res = await http.post<APIResponse<{ accessToken: string }>>(
+          '/auth/refresh',
+          {},
+          {
+            withCredentials: true,
+          },
+        );
 
-          return http(config);
-        } catch (error) {
-          store.set(accessTokenAtom, null);
+        const accessToken = res.data.responseObject.accessToken;
 
-          return Promise.reject(error);
-        }
-      },
-    );
+        config.headers = config.headers.setAuthorization(`Bearer ${accessToken}`);
+        store.set(accessTokenAtom, accessToken);
+
+        return http(config);
+      } catch (error) {
+        store.set(accessTokenAtom, null);
+
+        return Promise.reject(error);
+      }
+    });
 
     return () => {
-      authHttp.interceptors.request.eject(id);
+      authHttp.interceptors.request.eject(accessId);
+      authHttp.interceptors.request.eject(refreshId);
     };
   }, [store]);
 };
