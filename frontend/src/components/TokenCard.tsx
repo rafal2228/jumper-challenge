@@ -6,6 +6,7 @@ import { Box, Card, CardContent, IconButton, Link, Typography } from '@mui/mater
 import { grey } from '@mui/material/colors';
 import Image from 'next/image';
 import { useSnackbar } from 'notistack';
+import { PropsWithChildren } from 'react';
 import { Address, formatUnits } from 'viem';
 import { ChainIcon } from './ChainIcon';
 
@@ -60,7 +61,17 @@ type Props = {
   priceInUSD: string | null;
 };
 
-export const TokenCard = ({ name, symbol, address, chainId, logoUrl, balance, decimals, priceInUSD }: Props) => {
+export const TokenCard = ({
+  name,
+  symbol,
+  address,
+  chainId,
+  logoUrl,
+  balance,
+  decimals,
+  priceInUSD,
+  children,
+}: PropsWithChildren<Props>) => {
   const explorerUrl = getBlockExplorerUrl(address, chainId);
   const chainName = getChainName(chainId);
 
@@ -126,15 +137,19 @@ export const TokenCard = ({ name, symbol, address, chainId, logoUrl, balance, de
           Current balance: {formatUnits(BigInt(balance), decimals)} {symbol}
         </Typography>
 
-        <Typography variant="body1" component="p">
-          Total value: {formatTotalValue({ priceInUSD, balance, decimals })}
-        </Typography>
+        {priceInUSD && (
+          <Typography variant="body1" component="p">
+            Total value: {formatTotalValue({ priceInUSD, balance, decimals })}
+          </Typography>
+        )}
 
         {explorerUrl && (
           <Link href={explorerUrl} target="_blank" rel="noopener noreferrer">
             See on block explorer
           </Link>
         )}
+
+        {children}
       </CardContent>
     </Card>
   );

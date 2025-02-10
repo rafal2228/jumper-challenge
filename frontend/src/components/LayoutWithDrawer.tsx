@@ -37,8 +37,8 @@ const Links = () => (
       </ListItemButton>
     </ListItem>
     <ListItem disablePadding>
-      <ListItemButton component="a" href="/ranking">
-        <ListItemText primary="Ranking" />
+      <ListItemButton component="a" href="/explore">
+        <ListItemText primary="Explore" />
       </ListItemButton>
     </ListItem>
   </List>
