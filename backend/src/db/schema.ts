@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm';
-import { integer, pgTable, varchar, uuid, unique, bigint } from 'drizzle-orm/pg-core';
+import { integer, pgTable, varchar, uuid, unique, bigint, timestamp, numeric } from 'drizzle-orm/pg-core';
 
 export const tokens = pgTable(
   'tokens',
@@ -11,6 +11,13 @@ export const tokens = pgTable(
     symbol: varchar().notNull(),
     decimals: integer().notNull(),
     logoUrl: varchar(),
+    // Switching to simple varchar because of:
+    // https://github.com/drizzle-team/drizzle-orm/issues/1453
+    priceInUSD: varchar(),
+    priceUpdatedAt: timestamp()
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
   },
   (table) => [unique().on(table.address, table.chainId)],
 );
@@ -21,7 +28,9 @@ export const holdings = pgTable('holdings', {
   tokenId: uuid()
     .notNull()
     .references(() => tokens.id, { onDelete: 'cascade' }),
-  amount: bigint({ mode: 'bigint' }).notNull(),
+  // Switching to simple varchar because of:
+  // https://github.com/drizzle-team/drizzle-orm/issues/1453
+  amount: varchar().notNull(),
 });
 
 export const holdingsRelations = relations(holdings, ({ one }) => ({
