@@ -1,5 +1,9 @@
+import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import { generateKeyPairSync } from 'node:crypto';
 import { vi } from 'vitest';
+import { z } from 'zod';
+
+extendZodWithOpenApi(z);
 
 const keypair = generateKeyPairSync('rsa', {
   modulusLength: 2048,
