@@ -56,6 +56,8 @@ export const LayoutWithDrawer = ({ children }: PropsWithChildren) => {
       <Box display="flex" flexDirection="column" alignItems="stretch" padding={2} gap={1}>
         <AccountConnection />
 
+        <AccountDetails />
+
         <AccountConfirmation />
       </Box>
 

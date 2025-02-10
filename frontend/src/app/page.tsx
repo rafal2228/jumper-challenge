@@ -4,7 +4,7 @@ import { Box, Container, Typography } from '@mui/material';
 
 export default function Home() {
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth="xl" sx={{ marginLeft: 'unset', marginRight: 'unset' }}>
       <Box paddingY={2}>
         <Typography component="h1" variant="h5" marginBlockEnd={2}>
           My ERC20 watchlist:
