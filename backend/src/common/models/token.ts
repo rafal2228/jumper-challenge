@@ -8,4 +8,5 @@ export const tokenSchema = z.object({
   symbol: z.string(),
   decimals: z.number().int(),
   logoUrl: z.string().nullable(),
+  priceInUSD: z.string().nullable(),
 });

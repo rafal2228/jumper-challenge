@@ -10,6 +10,7 @@ import { holdingSchemaDTO } from '@/common/models/holding';
 import { ResponseStatus, ServiceResponse } from '@/common/models/serviceResponse';
 import { commonValidations } from '@/common/utils/commonValidation';
 import { handleServiceResponse, validateRequest } from '@/common/utils/httpHandlers';
+import { getLatestTokensPrice } from '@/common/utils/tokenPrice';
 import { supportedChains, viemClients } from '@/common/utils/viemClient';
 import { db } from '@/db';
 import { holdings, tokens } from '@/db/schema';
@@ -153,7 +154,7 @@ watchlistsRouter.post(
         .values({
           address: req.params.address,
           tokenId,
-          amount: balance,
+          amount: balance.toString(),
         })
         .returning()
         .then((holdings) => holdings[0]);
@@ -206,6 +207,8 @@ watchlistsRouter.post(
         return handleServiceResponse(serviceResponse, res);
       }
 
+      const tokenPriceInUSD = await getLatestTokensPrice([tokenAddress], tokenChainId).catch(() => null);
+
       const createdToken = await db
         .insert(tokens)
         .values({
@@ -214,6 +217,7 @@ watchlistsRouter.post(
           decimals: decimals.result,
           name: name.result,
           symbol: symbol.result,
+          priceInUSD: tokenPriceInUSD?.[tokenAddress].toString(),
         })
         .returning();
 
@@ -237,9 +241,6 @@ watchlistsRouter.post(
     const existingHolding = await db.query.holdings.findFirst({
       where: (holding, { eq, and }) =>
         and(eq(holding.address, req.params.address), eq(holding.tokenId, existingToken.id)),
-      with: {
-        token: true,
-      },
     });
 
     if (existingHolding) {

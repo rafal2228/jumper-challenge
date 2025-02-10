@@ -15,6 +15,7 @@ type Token = {
   symbol: string;
   decimals: number;
   logoUrl: string | null;
+  priceInUSD: string | null;
 };
 
 type Watchlist = {
@@ -85,6 +86,7 @@ export const Watchlist = () => {
           balance={holding.amount}
           decimals={holding.token.decimals}
           logoUrl={holding.token.logoUrl}
+          priceInUSD={holding.token.priceInUSD}
         />
       ))}
     </>

@@ -9,6 +9,26 @@ import { useSnackbar } from 'notistack';
 import { Address, formatUnits } from 'viem';
 import { ChainIcon } from './ChainIcon';
 
+const PRICE_DECIMALS = 18;
+
+const formatTotalValue = (props: { priceInUSD: string | null; balance: string; decimals: number }) => {
+  if (!props.priceInUSD || !props.balance) {
+    return '$0';
+  }
+
+  try {
+    const balance = BigInt(props.balance);
+    const priceInUSD = BigInt(props.priceInUSD);
+
+    const formatted = `$${formatUnits((balance * priceInUSD) / 10n ** BigInt(props.decimals), PRICE_DECIMALS)}`;
+    const [integer, fraction] = formatted.split('.');
+
+    return `${fraction?.length > 4 ? '~' : ''}${integer}.${fraction.slice(0, 4)}`;
+  } catch {
+    return '$0';
+  }
+};
+
 const CopyButton = ({ address }: { address: string }) => {
   const { enqueueSnackbar } = useSnackbar();
 
@@ -37,9 +57,10 @@ type Props = {
   logoUrl: string | null;
   balance: string;
   decimals: number;
+  priceInUSD: string | null;
 };
 
-export const TokenCard = ({ name, symbol, address, chainId, logoUrl, balance, decimals }: Props) => {
+export const TokenCard = ({ name, symbol, address, chainId, logoUrl, balance, decimals, priceInUSD }: Props) => {
   const explorerUrl = getBlockExplorerUrl(address, chainId);
   const chainName = getChainName(chainId);
 
@@ -103,6 +124,10 @@ export const TokenCard = ({ name, symbol, address, chainId, logoUrl, balance, de
 
         <Typography variant="body1" component="p">
           Current balance: {formatUnits(BigInt(balance), decimals)} {symbol}
+        </Typography>
+
+        <Typography variant="body1" component="p">
+          Total value: {formatTotalValue({ priceInUSD, balance, decimals })}
         </Typography>
 
         {explorerUrl && (
