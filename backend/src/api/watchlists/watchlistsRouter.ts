@@ -59,7 +59,7 @@ watchlistsRouter.get(
 
     const serviceResponse = new ServiceResponse<WatchlistsResponse>(
       ResponseStatus.Success,
-      'Nonce created successfully',
+      'Watchlists fetched successfully',
       watchlistsResponseSchema.parse({ holdings }),
       StatusCodes.OK,
     );
@@ -148,17 +148,19 @@ watchlistsRouter.post(
     const publicClient = viemClients[tokenChainId];
 
     const createHolding = (tokenId: string, balance: bigint) =>
-      db.insert(holdings).values({
-        address: req.params.address,
-        tokenId,
-        amount: balance,
-      });
+      db
+        .insert(holdings)
+        .values({
+          address: req.params.address,
+          tokenId,
+          amount: balance,
+        })
+        .returning()
+        .then((holdings) => holdings[0]);
 
     const existingToken = await db.query.tokens.findFirst({
-      where: (token, { eq }) => eq(token.address, req.body.tokenAddress) && eq(token.chainId, req.body.tokenChainId),
-      columns: {
-        id: true,
-      },
+      where: (token, { eq, and }) =>
+        and(eq(token.address, req.body.tokenAddress), eq(token.chainId, req.body.tokenChainId)),
     });
 
     if (!existingToken?.id) {
@@ -213,18 +215,19 @@ watchlistsRouter.post(
           name: name.result,
           symbol: symbol.result,
         })
-        .returning({
-          id: tokens.id,
-        });
+        .returning();
 
-      const tokenId = createdToken[0].id;
+      const token = createdToken[0];
 
-      const holding = await createHolding(tokenId, balance.result);
+      const holding = await createHolding(token.id, balance.result);
 
       const serviceResponse = new ServiceResponse<AddWatchlistResponse>(
         ResponseStatus.Success,
-        'Nonce created successfully',
-        addWatchlistResponseSchema.parse({ holding }),
+        'Added to watchlist',
+        addWatchlistResponseSchema.parse({
+          ...holding,
+          token,
+        }),
         StatusCodes.OK,
       );
 
@@ -232,7 +235,8 @@ watchlistsRouter.post(
     }
 
     const existingHolding = await db.query.holdings.findFirst({
-      where: (holding, { eq }) => eq(holding.address, req.params.address) && eq(holding.tokenId, existingToken.id),
+      where: (holding, { eq, and }) =>
+        and(eq(holding.address, req.params.address), eq(holding.tokenId, existingToken.id)),
       with: {
         token: true,
       },
@@ -255,8 +259,11 @@ watchlistsRouter.post(
 
     const serviceResponse = new ServiceResponse<AddWatchlistResponse>(
       ResponseStatus.Success,
-      'Nonce created successfully',
-      addWatchlistResponseSchema.parse({ holding }),
+      'Added to watchlist',
+      addWatchlistResponseSchema.parse({
+        ...holding,
+        token: existingToken,
+      }),
       StatusCodes.OK,
     );
 
