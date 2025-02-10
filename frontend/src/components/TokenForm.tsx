@@ -1,12 +1,13 @@
 'use client';
 import { useAuth } from '@/auth';
 import { getBlockExplorerUrl, supportedChains } from '@/utils/chain';
-import { authHttp } from '@/utils/http';
+import { authHttp, isAPIError } from '@/utils/http';
 import { zodResolver } from '@hookform/resolvers/zod';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import { Box, Button, Card, CardContent, Link, TextField, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useSnackbar } from 'notistack';
 import { useForm } from 'react-hook-form';
 import { Address, erc20Abi, formatUnits, isAddress } from 'viem';
 import { useAccount, useReadContracts } from 'wagmi';
@@ -23,6 +24,7 @@ const schema = z.object({
 });
 
 const useAddToWatchlist = () => {
+  const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -31,6 +33,11 @@ const useAddToWatchlist = () => {
     },
     onSuccess: (_, data) => {
       queryClient.invalidateQueries({ queryKey: ['watchlist', data.address] });
+    },
+    onError: (error) => {
+      if (isAPIError(error)) {
+        enqueueSnackbar(error.response?.data.message ?? error.message, { variant: 'error' });
+      }
     },
   });
 };

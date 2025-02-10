@@ -198,7 +198,7 @@ watchlistsRouter.post(
       ) {
         const serviceResponse = new ServiceResponse<null>(
           ResponseStatus.Failed,
-          `Unable to load token details. Are you sure it's a valid token address?`,
+          "Unable to load token details. Are you sure it's a valid token address?",
           null,
           StatusCodes.BAD_REQUEST,
         );
@@ -243,7 +243,12 @@ watchlistsRouter.post(
     });
 
     if (existingHolding) {
-      const serviceResponse = new ServiceResponse<null>(ResponseStatus.Failed, 'Conflict', null, StatusCodes.CONFLICT);
+      const serviceResponse = new ServiceResponse<null>(
+        ResponseStatus.Failed,
+        'Token is already on the watchlist',
+        null,
+        StatusCodes.CONFLICT,
+      );
 
       return handleServiceResponse(serviceResponse, res);
     }
