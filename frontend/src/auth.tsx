@@ -85,7 +85,13 @@ const useAuthInterceptors = () => {
       }
 
       try {
-        const res = await http.post<APIResponse<{ accessToken: string }>>('/auth/refresh');
+        const res = await http.post<APIResponse<{ accessToken: string }>>(
+          '/auth/refresh',
+          {},
+          {
+            withCredentials: true,
+          },
+        );
 
         const accessToken = res.data.responseObject.accessToken;
 

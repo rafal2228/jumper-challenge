@@ -1,6 +1,7 @@
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import express, { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import { erc20Abi } from 'viem';
 import { z } from 'zod';
 
 import { createApiResponse } from '@/api-docs/openAPIResponseBuilders';
@@ -12,7 +13,6 @@ import { handleServiceResponse, validateRequest } from '@/common/utils/httpHandl
 import { supportedChains, viemClients } from '@/common/utils/viemClient';
 import { db } from '@/db';
 import { holdings, tokens } from '@/db/schema';
-import { erc20Abi } from 'viem';
 
 export const watchlistsRegistry = new OpenAPIRegistry();
 

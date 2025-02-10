@@ -168,7 +168,8 @@ authRouter.post(
 
     res.cookie(env.AUTH_REFRESH_TOKEN_COOKIE_NAME, refreshToken, {
       httpOnly: true,
-      sameSite: 'strict',
+      sameSite: 'none',
+      path: '/auth/refresh',
       secure: env.isProduction,
     });
 
